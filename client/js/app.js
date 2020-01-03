@@ -1,5 +1,6 @@
 const search = document.getElementById("search");
 const matchlist = document.getElementById("match-list");
+const addBtn = document.getElementById("addBtn");
 const mealFoods = [];
 let searchedFood = [];
 const searchFood = async searchText => {
@@ -16,35 +17,33 @@ const searchFood = async searchText => {
 };
 const outputHtml = foods => {
   console.log("Foods", foods);
-  const html = foods
-    .map(
-      item =>
-        `<div class="card card-body mb-1">
-        <h4>${item.Name}</h4>
-        <small>Calories: ${item.Calories}</small>
-        <small>Protein: ${item.Protein}</small>
-        <small>Fat: ${item.Fat}</small>
-        <small>Carbohydrates: ${item.Carbohydrates}</small>
-        <button onClick="addToMeal('${item.Id}')">Dodaj</button>
-        </div>`
-    )
-    .join("");
+  const html = foods.map(item => {
+    const el = document.createElement("option");
+    el.value = item.Name;
+    el.textContent = item.Name;
+    // const el = `<option value="${item.id}" onClick="addMeal()">
+    //   ${item.Name}
+    //   </option>`;
+    el.addEventListener("click", addMeal);
+    return el;
+  });
   console.log(html);
-  matchlist.innerHTML = html;
+  html.forEach(element => {
+    matchlist.appendChild(element);
+  });
 };
 
-function isEqualId(item, id) {
-  return item.Id === id;
-}
-const addToMeal = ingredient => {
-  console.log("Searcged foor", searchedFood);
-  console.log("Ingredient", ingredient);
-  console.log(searchedFood[0].id == ingredient);
-  const ing = searchedFood.filter(item => {
-    return item.id == ingredient;
-  });
-  console.log("ing", ing);
-  mealFoods.push(ing[0]);
-  console.log("Mealfood", mealFoods);
+const addMeal = e => {
+  const searchText = search.value;
+  const choosen = searchedFood.filter(item => item.Name === searchText);
+  mealFoods.push(...choosen);
+  console.log(mealFoods);
+  // const ing = searchedFood.filter(item => {
+  //   return item.id == ingredient;
+  // });
+  // console.log("ing", ing);
+  // mealFoods.push(ing[0]);
+  // console.log("Mealfood", mealFoods);
 };
 search.addEventListener("input", () => searchFood(search.value));
+addBtn.addEventListener("click", addMeal);
